@@ -4,7 +4,7 @@ from PIL import Image, ImageOps
 import re
 import gradio as gr
 
-
+#mostra qual device esta usando.
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 
@@ -64,6 +64,7 @@ def process_image(image):
     except Exception as e:
         return f"❌ Ocorreu um erro: {str(e)}"
 
+#aqui abaixo esta a biblioteca de imagens, onde ao trocas ao texto dentro do [] poderá parar de aparecer as mesmas no gradio.
 
 interface = gr.Interface(
     fn=process_image,
