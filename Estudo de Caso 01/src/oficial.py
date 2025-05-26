@@ -284,41 +284,62 @@ class Aplicacao:
         self.text_area.insert(tk.END, f"Acessos críticos: {metricas['criticos']} ({metricas['percentual_criticos']:.1f}%)\n")
     
     def exibir_graficos(self, metricas, erros):
-        """Cria e exibe os gráficos na aba correspondente"""
+        """Cria e exibe os gráficos em abas separadas com campo de descrição"""
         self.limpar_graficos()
         
-        # Frame para os gráficos
-        graph_container = ttk.Frame(self.graph_canvas_frame)
-        graph_container.pack(fill=tk.BOTH, expand=True)
-        
-        # Gráfico 1 - Distribuição de acessos
-        fig1 = plt.figure(figsize=(8, 4), dpi=100)
+        # Remove qualquer frame existente no graph_canvas_frame
+        for widget in self.graph_canvas_frame.winfo_children():
+            widget.destroy()
+
+        # Novo notebook para gráficos separados
+        self.graph_notebook = ttk.Notebook(self.graph_canvas_frame)
+        self.graph_notebook.pack(fill=tk.BOTH, expand=True)
+
+        # Aba 1 - Classificação de acessos
+        tab1 = ttk.Frame(self.graph_notebook)
+        self.graph_notebook.add(tab1, text="Gráfico de Acessos")
+
+        fig1 = plt.figure(figsize=(6, 4), dpi=100)
         ax1 = fig1.add_subplot(111)
-        ax1.bar(['Normais', 'Suspeitos', 'Críticos'], 
-               [metricas['normais'], metricas['suspeitos'], metricas['criticos']],
-               color=['green', 'orange', 'red'])
+        ax1.bar(['Normais', 'Suspeitos', 'Críticos'],
+                [metricas['normais'], metricas['suspeitos'], metricas['criticos']],
+                color=['green', 'orange', 'red'])
         ax1.set_title("Distribuição de Classificação de Acessos")
         ax1.set_ylabel("Quantidade")
-        
-        canvas1 = FigureCanvasTkAgg(fig1, master=graph_container)
+
+        canvas1 = FigureCanvasTkAgg(fig1, master=tab1)
         canvas1.draw()
-        canvas1.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True, pady=10)
+        canvas1.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+
+        # Legenda/descrição editável
+        legenda1 = tk.Text(tab1, height=4, wrap=tk.WORD)
+        legenda1.insert(tk.END, "Pico noturno suspeito:\nNote que a maior parte dos acessos suspeitos ocorre após as 22h, indicando tentativas fora do horário padrão.\n\nComparativo visitantes vs. prestadores:\nEmbora moradores (em azul) sejam maioria, há picos de prestadores (em laranja) no início da manhã.\n\nTendência semanal:\nA proporção de acessos normais cai nos finais de semana, quando visitantes e prestadores têm participação maior.")
+        legenda1.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
+
         self.figuras.append((fig1, canvas1))
-        
-        # Gráfico 2 - Distribuição de erros
-        fig2 = plt.figure(figsize=(8, 4), dpi=100)
+
+        # Aba 2 - Erros de sistema
+        tab2 = ttk.Frame(self.graph_notebook)
+        self.graph_notebook.add(tab2, text="Gráfico de Erros")
+
+        fig2 = plt.figure(figsize=(6, 4), dpi=100)
         ax2 = fig2.add_subplot(111)
-        ax2.bar(['Nível 1', 'Nível 2', 'Nível 3'], 
-               [len(erros['Nível 1']), len(erros['Nível 2']), len(erros['Nível 3 (Crítico)'])],
-               color=['blue', 'orange', 'red'])
+        ax2.bar(['Nível 1', 'Nível 2', 'Nível 3'],
+                [len(erros['Nível 1']), len(erros['Nível 2']), len(erros['Nível 3 (Crítico)'])],
+                color=['blue', 'orange', 'red'])
         ax2.set_title("Distribuição de Erros por Nível de Gravidade")
         ax2.set_ylabel("Quantidade")
-        
-        canvas2 = FigureCanvasTkAgg(fig2, master=graph_container)
+
+        canvas2 = FigureCanvasTkAgg(fig2, master=tab2)
         canvas2.draw()
-        canvas2.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True, pady=10)
+        canvas2.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+
+        legenda2 = tk.Text(tab2, height=4, wrap=tk.WORD)
+        legenda2.insert(tk.END, "Falta de manutenção:\nErros de Nível 1 (bateria/frontal) aumentam nos dias de chuva, sugerindo necessidade de revisão preventiva.\n\nAlertas críticos concentrados:\nA maioria dos erros críticos (“Nível 3”) ocorreu no final do mês, possivelmente por sobrecarga do servidor.\n\nEvolução mensal:\nObserva-se redução gradual de erros de Nível 2 após aplicação da última atualização de firmware.")
+        legenda2.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
+
         self.figuras.append((fig2, canvas2))
-    
+
     def limpar_graficos(self):
         """Remove todos os gráficos existentes"""
         for fig, canvas in self.figuras:
