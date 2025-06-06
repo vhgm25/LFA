@@ -271,7 +271,7 @@ class Aplicacao:
         self.text_area.insert(tk.END, "\nCLASSIFICAÇÃO DE ACESSOS:\n")
         for categoria, acessos in classificacoes.items():
             self.text_area.insert(tk.END, f"\n{categoria} ({len(acessos)}):\n")
-            for acesso in acessos[:10]:  # Mostra apenas os 10 primeiros de cada categoria
+            for acesso in acessos[:10]:  
                 self.text_area.insert(tk.END, f"- {acesso}\n")
             if len(acessos) > 10:
                 self.text_area.insert(tk.END, f"- ... e mais {len(acessos)-10} acessos\n")
@@ -313,7 +313,7 @@ class Aplicacao:
 
         # Legenda/descrição editável
         legenda1 = tk.Text(tab1, height=4, wrap=tk.WORD)
-        legenda1.insert(tk.END, "Pico noturno suspeito:\nNote que a maior parte dos acessos suspeitos ocorre após as 22h, indicando tentativas fora do horário padrão.\n\nComparativo visitantes vs. prestadores:\nEmbora moradores (em azul) sejam maioria, há picos de prestadores (em laranja) no início da manhã.\n\nTendência semanal:\nA proporção de acessos normais cai nos finais de semana, quando visitantes e prestadores têm participação maior.")
+        legenda1.insert(tk.END, "Nivel 1:\nSão os acessos dentro do horario permitido, sendo ele entre as 6:00 da manhã até as 22:00 da noite.\n\nNivel 2:\nVisitantes são registrados como suspeito ou saidas fora do horario.\n\nNivel 3:\nPessoas não registradas conseguindo adentrar no interior do condominio.")
         legenda1.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
 
         self.figuras.append((fig1, canvas1))
@@ -335,7 +335,7 @@ class Aplicacao:
         canvas2.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
         legenda2 = tk.Text(tab2, height=4, wrap=tk.WORD)
-        legenda2.insert(tk.END, "Falta de manutenção:\nErros de Nível 1 (bateria/frontal) aumentam nos dias de chuva, sugerindo necessidade de revisão preventiva.\n\nAlertas críticos concentrados:\nA maioria dos erros críticos (“Nível 3”) ocorreu no final do mês, possivelmente por sobrecarga do servidor.\n\nEvolução mensal:\nObserva-se redução gradual de erros de Nível 2 após aplicação da última atualização de firmware.")
+        legenda2.insert(tk.END, "Nível 1:\nErros de Nível 1 são os erros onde são simples de monitorar ou de simples resolução.\n\nNível 2:\nOs erros de nível 2 são aqueles que precisam de uma observação maior, sendo eles falhas de câmeras em lugares próximos.\n\nNível 3:\nOs erros de nível 3 requerem manutenção o mais rapído possivel, sendo eles o sistema principal não funcionando ou um alarme importante disparando sem motivos aparentes.")
         legenda2.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
 
         self.figuras.append((fig2, canvas2))
